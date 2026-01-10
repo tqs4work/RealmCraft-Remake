@@ -147,6 +147,16 @@ public class FirebaseConnect : MonoBehaviour
         string username = GameObject.Find("Canvas").gameObject.transform.Find("InputUsername").gameObject.GetComponent<TMP_InputField>().text;
         string password = GameObject.Find("Canvas").gameObject.transform.Find("InputPassword").gameObject.GetComponent<TMP_InputField>().text;
         var firebase = new FirebaseClient(firebaseUrl);
+        var accounts = await firebase.Child("Accounts").OnceAsync<Account>();
+        foreach (var acc in accounts)
+        {
+            if (acc.Object.Username == username)
+            {                
+                ShowMess("Account Existed");
+                ClearInput();
+                return;
+            }
+        }
         var account = new Account
         {
             Username = username,
@@ -184,6 +194,12 @@ public class FirebaseConnect : MonoBehaviour
         {
             t.GetComponent<TextMeshProUGUI>().text = mess;
         }
+    }
+
+    static void ClearInput()
+    {
+        GameObject.Find("Canvas").gameObject.transform.Find("InputUsername").gameObject.GetComponent<TMP_InputField>().text = "";
+        GameObject.Find("Canvas").gameObject.transform.Find("InputPassword").gameObject.GetComponent<TMP_InputField>().text = "";
     }
     //CLASS B? SUNG THEO YÊU C?U (CÁC BI?N ?ÚNG CHÍNH T? VS KEY TREN JSON)
 
