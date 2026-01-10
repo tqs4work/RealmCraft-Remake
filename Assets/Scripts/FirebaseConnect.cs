@@ -19,7 +19,27 @@ public class FirebaseConnect : MonoBehaviour
         //await AddData();
         await ReadData();
         //await DeleteData();
+        
+
     }
+
+    async void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            await SignUp();
+        }
+    }
+
+    public async void OnSignUpButtonClick()
+    {        
+        await SignUp();
+    }
+    public async void OnSignInButtonClick()
+    {
+        await SignIn();
+    }
+
 
 
 
@@ -56,8 +76,9 @@ public class FirebaseConnect : MonoBehaviour
 
     //FIREBASE WORKING
 
-    ////PutAsync: Ghi ?è toàn b? d? li?u.
-    ////PatchAsync: C?p nh?t m?t ph?n d? li?u.
+    ////PutAsync: Ghi đè toàn bộ dữ liệu
+    ////PatchAsync: Cập nhật một phần dữ liệu
+    ///PostAsync: Thêm dữ liệu mới với key tự động tạo
 
     //Add
     public static async Task AddData()
@@ -118,10 +139,61 @@ public class FirebaseConnect : MonoBehaviour
         await firebase.Child("Tasks").Child("Message").DeleteAsync(); //xóa Child Message chứ k xóa Tasks
         Console.WriteLine("Delete Successful");
     }
-    
 
 
+    //Sign Up & Sign In (Authentication)
+    public static async Task SignUp()
+    {
+        string username = GameObject.Find("Canvas").gameObject.transform.Find("InputUsername").gameObject.GetComponent<TMP_InputField>().text;
+        string password = GameObject.Find("Canvas").gameObject.transform.Find("InputPassword").gameObject.GetComponent<TMP_InputField>().text;
+        var firebase = new FirebaseClient(firebaseUrl);
+        var account = new Account
+        {
+            Username = username,
+            Password = password,
+            Timecreate = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+            //Timecreate = DateTime.Now.ToString("yyyy-MM-dd")
+        };
+        await firebase.Child("Accounts").Child("Acc Create "+ account.Timecreate).PutAsync(account);
+        Console.WriteLine("Sign Up Successful");
+        ShowMess("Sign Up Successful");
+    }
+    public static async Task SignIn()
+    {
+        string username = GameObject.Find("Canvas").gameObject.transform.Find("InputUsername").gameObject.GetComponent<TMP_InputField>().text;
+        string password = GameObject.Find("Canvas").gameObject.transform.Find("InputPassword").gameObject.GetComponent<TMP_InputField>().text;
+        var firebase = new FirebaseClient(firebaseUrl);
+        var accounts = await firebase.Child("Accounts").OnceAsync<Account>();
+        foreach (var acc in accounts)
+        {
+            if (acc.Object.Username == username && acc.Object.Password == password)
+            {
+                Console.WriteLine("Sign In Successful");
+                ShowMess("Sign In Successful");
+                return;
+            }
+        }
+        Console.WriteLine("Sign In Failed");
+        ShowMess("Sign In Failed");
+    }
+
+    static void ShowMess(string mess)
+    {
+        GameObject t = GameObject.Find("Canvas").gameObject.transform.Find("Text").gameObject;
+        if (t != null)
+        {
+            t.GetComponent<TextMeshProUGUI>().text = mess;
+        }
+    }
     //CLASS B? SUNG THEO YÊU C?U (CÁC BI?N ?ÚNG CHÍNH T? VS KEY TREN JSON)
+
+    public class Account
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Timecreate { get; set; }
+        public Player p { get; set; }
+    }
     public class Player
     {
         public string Id { get; set; }
