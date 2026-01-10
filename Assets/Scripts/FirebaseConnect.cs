@@ -19,7 +19,7 @@ public class FirebaseConnect : MonoBehaviour
         //await AddData();
         await ReadData();
         //await DeleteData();
-        
+
 
     }
 
@@ -32,7 +32,7 @@ public class FirebaseConnect : MonoBehaviour
     }
 
     public async void OnSignUpButtonClick()
-    {        
+    {
         await SignUp();
     }
     public async void OnSignInButtonClick()
@@ -91,7 +91,7 @@ public class FirebaseConnect : MonoBehaviour
         };
         await firebase.Child("Tasks").PutAsync(Data);
     }
-    
+
 
     //Read
     public static async Task ReadData()
@@ -129,7 +129,7 @@ public class FirebaseConnect : MonoBehaviour
         };
         await firebase.Child("Tasks").PatchAsync(updateData);
     }
-    
+
 
 
     //Delete
@@ -151,7 +151,7 @@ public class FirebaseConnect : MonoBehaviour
         foreach (var acc in accounts)
         {
             if (acc.Object.Username == username)
-            {                
+            {
                 ShowMess("Account Existed");
                 ClearInput();
                 return;
@@ -164,7 +164,7 @@ public class FirebaseConnect : MonoBehaviour
             Timecreate = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
             //Timecreate = DateTime.Now.ToString("yyyy-MM-dd")
         };
-        await firebase.Child("Accounts").Child("Acc Create "+ account.Timecreate).PutAsync(account);
+        await firebase.Child("Accounts").Child("Acc Create " + account.Timecreate).PutAsync(account);
         Console.WriteLine("Sign Up Successful");
         ShowMess("Sign Up Successful");
     }
